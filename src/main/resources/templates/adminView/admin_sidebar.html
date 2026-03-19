@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<aside class="sidebar" th:fragment="admin_sidebar(currentMenu, lang)">
+	<ul class="nav-menu">
+		<a th:href="@{/admin/dashboard(lang=${lang})}"
+		   class="nav-item"
+		   th:classappend="${currentMenu == 'dashboard'} ? 'active' : ''">
+			<span class="nav-icon">🏠</span>
+			<span th:text="#{admin.menu.dashboard}">DashBoard</span>
+		</a>
+		
+		<a th:href="@{/admin/user(lang=${lang})}"
+		   class="nav-item"
+		   th:classappend="${currentMenu == 'users'} ? 'active' : ''">
+			<span class="nav-icon">👥</span>
+			<span th:text="#{admin.menu.users}">Users</span>
+		</a>
+		
+		<a th:href="@{/admin/post(lang=${lang})}"
+		   class="nav-item"
+		   th:classappend="${currentMenu == 'post'} ? 'active' : ''">
+			<span class="nav-icon">📄</span>
+			<span th:text="#{admin.menu.post}">Post</span>
+		</a>
+		
+		<a th:href="@{/admin/log(lang=${lang})}"
+		   class="nav-item"
+		   th:classappend="${currentMenu == 'log'} ? 'active' : ''">
+			<span class="nav-icon">🕸️</span>
+			<span th:text="#{admin.menu.log}">Log</span>
+		</a>
+	</ul>
+	
+	<div class="lang-switch-container">
+		<button class="btn-lang"
+		        th:classappend="${lang == 'ko' || lang == null ? 'active' : ''}"
+		        onclick="changeAdminLanguage('ko')">KO</button>
+		<button class="btn-lang"
+		        th:classappend="${lang == 'ja' ? 'active' : ''}"
+		        onclick="changeAdminLanguage('ja')">JP</button>
+	</div>
+
+    <script defer th:src="@{/js/adminView/admin_sidebar.js}"></script>
+</aside>
+</html>

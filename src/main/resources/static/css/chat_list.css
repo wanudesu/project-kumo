@@ -1,0 +1,635 @@
+@charset "UTF-8";
+
+/* 🌟 i 태그(FontAwesome 아이콘)는 폰트 덮어쓰기에서 제외! */
+*:not(i) {
+    font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+body, input, textarea, button, select {
+    font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+/* --- 1. 기본 설정 --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* [수정] body 배경색 변경 */
+body {
+    background-color: #f4f7fa;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+button {
+    outline: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.mobile-container {
+    /* ★ 절대 수치(480px)를 버리고, 액자(iframe) 크기에 맞춰 100% 꽉 차게 변경! */
+    width: 100%;
+    max-width: 500px;
+    /* PC에서 단독으로 열렸을 때 너무 퍼지지 않게 방어막만 쳐둠 */
+
+    /* ★ iframe 안에서는 100vh(화면 전체)보다 100%(부모 액자 크기)가 훨씬 안전합니다 */
+    min-height: 100%;
+
+    background-color: #fff;
+    padding: 20px 20px;
+}
+
+/* --- 3. 헤더 (햄버거 + 검색) --- */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    /* ★ 우측에만 45px의 여백을 줘서 검색 아이콘을 왼쪽으로 대피시킵니다! (상 우 하 좌) */
+    padding: 0 45px 0 5px;
+}
+
+/* [완전 교체] 테두리/배경 없이 아이콘 자체에 음영 적용 */
+.header-icon {
+    font-size: 26px;
+    /* 아이콘 크기 약간 키움 */
+    color: #8abfff;
+    /* 기본 하늘색 */
+    background: transparent;
+    /* 배경 완전 투명 */
+
+    width: 40px;
+    /* 클릭 영역만 확보 */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* 쫀득한 애니메이션 */
+}
+
+/* [Hover] 마우스 올리면: 아이콘 모양대로 강렬한 그림자 방출 */
+.header-icon:hover {
+    /* box-shadow가 아닌 filter: drop-shadow 사용 */
+    filter: drop-shadow(0 6px 8px rgba(138, 191, 255, 0.5));
+    /* 그림자 이빠이 */
+    transform: translateY(-2px) scale(1.05);
+    /* 살짝 떠오르며 커짐 */
+    color: #5da2ff;
+    /* 색상도 진해짐 */
+}
+
+/* [Active] 클릭하면: 그림자가 눌리면서 작아짐 */
+.header-icon:active {
+    filter: drop-shadow(0 2px 3px rgba(138, 191, 255, 0.3));
+    /* 그림자 축소 */
+    transform: scale(0.95) translateY(0);
+    /* 눌리는 효과 */
+}
+
+/* --- 4. 탭 메뉴 (전체/읽지않음/읽음) --- */
+.tab-menu {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 5px;
+    border-bottom: 2px solid #f0f4f8;
+    /* 심플한 구분선만 */
+    background-color: transparent;
+    /* ✅ 배경 투명 */
+    border-radius: 0;
+    /* ✅ 곡률 제거 */
+    box-shadow: none;
+    /* ✅ 그림자 제거 */
+    position: relative;
+    z-index: 10;
+}
+
+body.dark-mode .tab-menu {
+    background-color: transparent !important;
+    border-bottom: 2px solid #37393d !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 탭 버튼 스타일 */
+.tab-btn {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    padding: 0 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    /* ✅ 높이 고정 */
+    line-height: 1;
+}
+
+.tab-btn.active {
+    background-color: #8abfff;
+    color: #fff;
+    border-radius: 20px;
+    padding: 0 25px;
+    /* ✅ 상하 패딩 제거, 좌우만 */
+    height: 38px;
+    /* ✅ 동일한 높이 고정 */
+    box-shadow: 0 4px 10px rgba(138, 191, 255, 0.4);
+    line-height: 1;
+}
+
+/* [수정] .chat-list 내부에 아래 줄만 추가하세요 */
+.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* 리스트 간격은 유지 */
+
+    /* ★ 추가: 상단 구름 경계와의 간격 */
+    padding-top: 15px;
+}
+
+/* [수정] .chat-item 내부에 아래 줄만 추가하세요 */
+.chat-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 18px 5px;
+    /* 상하 여백을 약간 늘려 직선 간격 확보 */
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 12px;
+
+    /* ★ 추가: 방 사이를 구분하는 직선 */
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* [신규 추가] 리스트 맨 마지막 선은 제거해서 깔끔하게 처리 */
+.chat-item:last-child {
+    border-bottom: none;
+}
+
+.chat-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* 1. 프로필 이미지 */
+.avatar-wrapper {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. 실제 이미지 및 엑박 플레이스홀더 */
+.avatar-img,
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 3. 이미지가 없을 때(엑박) 나오는 회색 동그라미 */
+.avatar-placeholder {
+    background-color: #d3d3d3;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+}
+
+/* 온라인 상태 점 (초록색) */
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    background-color: #4cd964;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+/* 중앙 텍스트 */
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 5px;
+    overflow: hidden;
+    /* 텍스트 넘침 방지 */
+}
+
+.chat-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.chat-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+}
+
+.pin-icon {
+    display: none;
+    color: #8abfff;
+    font-size: 13px;
+    margin-left: 5px;
+    transform: rotate(-30deg);
+}
+
+/* 고정된 방(is-pinned)일 때만 핀 아이콘 노출 */
+.chat-item.is-pinned .pin-icon {
+    display: inline-block;
+}
+
+/* 고정된 방 배경색을 살짝 다르게 주어 시각적 구분 (선택사항) */
+.chat-item.is-pinned {
+    background-color: #f4f8ff;
+}
+
+.chat-preview {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+    white-space: nowrap;
+    /* 한 줄로 표시 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 말줄임표 (...) */
+    margin-right: 10px;
+}
+
+.highlight-text {
+    color: #4a8df6;
+}
+
+/* 파란색 텍스트 (하나 궁금한게...) */
+
+/* 우측 정보 (시간, 배지) */
+.chat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 60px;
+    padding-top: 5px;
+}
+
+.chat-time {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.unread-badge {
+    width: 20px;
+    height: 20px;
+    background-color: #2f80ed;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-dots {
+    color: #8abfff;
+    font-size: 18px;
+    margin-bottom: 5px;
+    /* 시간 대신 점이 있는 경우 위치 조정 */
+}
+
+/* [신규 추가] 헤더 로고 스타일 */
+.header-logo {
+    height: 32px;
+    /* 1. 로고 높이 (헤더 아이콘 크기와 밸런스 조정) */
+    width: auto;
+    /* 2. 가로 길이는 비율에 맞게 자동 조절 */
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* [확인] 기존 .chat-header의 정렬 방식 */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    /* 3. 요소가 3개가 되면 양끝과 정중앙에 자동 배치됨 */
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding: 0 5px;
+}
+
+/* [chat_list.css 맨 아래 교체] */
+
+/* 1. 검색창 기본 상태 (숨겨진 상태) */
+.search-container {
+    /* display: none 대신 높이를 0으로 만들어 숨깁니다 */
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    /* 내용물이 넘치지 않게 숨김 */
+    transform: translateY(-20px);
+    /* 살짝 위로 올려둠 */
+
+    padding: 0 10px;
+    /* 상하 패딩은 height에 포함되므로 좌우만 줌 */
+    background-color: #fff;
+    position: relative;
+    z-index: 100;
+
+    /* 부드러운 변화를 위한 핵심 속성 */
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* 2. 검색창 활성 상태 (나타난 상태) */
+/* 자바스크립트가 이 클래스를 붙이면 부드럽게 열립니다 */
+.search-container.active {
+    height: 70px;
+    /* 검색바가 들어갈 충분한 높이 확보 */
+    opacity: 1;
+    transform: translateY(0);
+    /* 원래 위치로 내려옴 */
+    padding-top: 15px;
+    /* 열렸을 때 상단 여백 추가 */
+}
+
+/* 입력창 스타일은 기존 유지 */
+#searchInput {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #f8faff;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(138, 191, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+#searchInput:focus {
+    border-color: #8abfff;
+    box-shadow: 0 4px 15px rgba(138, 191, 255, 0.25);
+}
+
+/* [chat_list.css 맨 아래 추가] */
+
+.chat-options {
+    position: relative;
+    margin-left: 5px;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* [교체] 점 세개 아이콘: 위아래 여백은 없애고 양옆 클릭 영역만 유지 */
+.options-icon {
+    color: #8abfff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0px 5px;
+    /* 위아래 0px, 양옆 5px */
+}
+
+.options-icon:hover {
+    color: #5da2ff;
+}
+
+/* 팝업 드롭다운 기본 상태 (숨김 & 살짝 위로 올라가 있음) */
+.options-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 90px;
+    background-color: #fff;
+    border: 1px solid #f0f4f8;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(138, 191, 255, 0.2);
+    z-index: 100;
+
+    /* 애니메이션 핵심 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 팝업 드롭다운 활성화 상태 (스륵 나타남) */
+.options-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 팝업 내부 메뉴 아이템 */
+.option-item {
+    padding: 12px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.option-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 1px solid #f8faff;
+}
+
+.option-item:last-child {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.option-item:hover {
+    background-color: #f8faff;
+}
+
+/* '삭제' 버튼 전용 스타일 (빨간색 포인트) */
+.option-item.delete {
+    color: #ff6b6b;
+}
+
+.option-item.delete:hover {
+    background-color: #fff0f0;
+}
+
+.option-icon {
+    color: #8abfff !important;
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* 기본 상태: 검색창 숨김 (높이 0, 투명도 0) */
+.search-container {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out; /* 부드럽게 스르륵 열리는 효과 */
+    padding: 0 15px;
+}
+
+/* 돋보기를 눌러서 active 클래스가 붙었을 때: 검색창 나타남 */
+.search-container.active {
+    height: 50px; /* 검색창 높이에 맞게 조절 */
+    opacity: 1;
+    margin-bottom: 10px;
+}
+
+/* 검색 입력칸 예쁘게 꾸미기 (선택 사항) */
+#searchInput {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+}
+
+#searchInput:focus {
+    border-color: #7db4e6; /* KUMO 메인 하늘색 */
+    box-shadow: 0 0 5px rgba(125, 180, 230, 0.3);
+}
+
+/* ============================================================
+   🌙 채팅 목록 다크모드 (KUMO Master Palette 적용)
+   ============================================================ */
+body.dark-mode {
+    background-color: #1e1f21 !important;
+    color: #e3e5e8 !important;
+}
+
+body.dark-mode .mobile-container {
+    background-color: #1e1f21 !important;
+}
+
+body.dark-mode .tab-btn {
+    color: #b0b3b8 !important;
+}
+
+body.dark-mode .tab-btn.active {
+    background-color: #7db4e6 !important;
+    color: #1e1f21 !important; /* 대비를 위해 어두운 글자 */
+    box-shadow: 0 4px 10px rgba(125, 180, 230, 0.2) !important;
+}
+
+/* 검색창 */
+body.dark-mode .search-container {
+    background-color: #1e1f21 !important;
+}
+body.dark-mode #searchInput {
+    background-color: #252729 !important;
+    border: 1px solid #37393d !important;
+    color: #e3e5e8 !important;
+}
+body.dark-mode #searchInput::placeholder {
+    color: #91959b !important;
+}
+
+/* 채팅 리스트 아이템 */
+body.dark-mode .chat-item {
+    border-bottom: 1px solid #37393d !important;
+}
+body.dark-mode .chat-item:hover {
+    background-color: #2a2b2e !important;
+}
+body.dark-mode .chat-item.is-pinned {
+    background-color: #252729 !important;
+}
+
+/* 텍스트 컬러 */
+body.dark-mode .chat-name { color: #e3e5e8 !important; }
+body.dark-mode .chat-preview { color: #b0b3b8 !important; }
+body.dark-mode .chat-time { color: #91959b !important; }
+
+/* 옵션(점 세개) 드롭다운 */
+body.dark-mode .options-dropdown {
+    background-color: #2a2b2e !important;
+    border: 1px solid #37393d !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+}
+body.dark-mode .option-item { color: #e3e5e8 !important; }
+body.dark-mode .option-item:hover { background-color: #37393d !important; }
+body.dark-mode .option-item.delete:hover { background-color: #3a2020 !important; color: #ff6b6b !important;}
+
+/* ============================================================
+   ✨ KUMO 시그니처 커스텀 스크롤바 (전역 적용)
+   ============================================================ */
+
+/* 1. 스크롤바 전체 너비 설정 (아주 얇게) */
+::-webkit-scrollbar {
+    width: 8px;
+    /* 세로 스크롤바 두께 */
+    height: 8px;
+    /* 가로 스크롤바 두께 */
+}
+
+/* 2. 스크롤바 트랙 (바닥) */
+::-webkit-scrollbar-track {
+    background: transparent;
+    /* 배경을 투명하게 해서 평소엔 안 보이게 */
+}
+
+/* 3. 스크롤바 핸들 (움직이는 막대) */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(125, 180, 230, 0.3);
+    /* 쿠모 하늘색에 투명도 30% */
+    border-radius: 10px;
+    /* 조약돌처럼 둥글게 */
+    border: 2px solid transparent;
+    /* 트랙과 약간 띄워진 느낌 */
+    background-clip: padding-box;
+}
+
+/* 4. 마우스를 올렸을 때만 더 선명하게 */
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(125, 180, 230, 0.7);
+    /* 좀 더 진한 하늘색으로 변신 */
+}
+
+/* 🌙 다크모드 대응 */
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* 다크모드에선 은은한 화이트 */
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(125, 180, 230, 0.5);
+    /* 다크모드 호버 시 하늘색 광채 */
+}

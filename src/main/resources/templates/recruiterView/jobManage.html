@@ -1,0 +1,193 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>KUMO RECRUITER - 공고 관리</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel="stylesheet" th:href="@{/css/recruiter/recruiterHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/NonLoginFragments/NonLoginFooter.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/rightSidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/jobManage.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/calendar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/dark-theme.css}" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script th:inline="javascript">
+        /* <![CDATA[ */
+        const msgDelTitle = /*[[#{job.manage.swal.del_title}]]*/ '정말 삭제하시겠습니까?';
+        const msgDelText = /*[[#{job.manage.swal.del_text}]]*/ '삭제된 공고는 다시 복구할 수 없습니다!';
+        const msgBtnDel = /*[[#{job.manage.swal.btn_del}]]*/ '삭제하기';
+        const msgBtnCancel = /*[[#{job.manage.swal.btn_cancel}]]*/ '취소';
+        const msgDelOk = /*[[#{job.manage.swal.del_ok}]]*/ '삭제 완료!';
+        const msgDelOkText = /*[[#{job.manage.swal.del_ok_text}]]*/ '공고가 성공적으로 삭제되었습니다.';
+        const msgError = /*[[#{job.manage.swal.error}]]*/ '오류 발생';
+        const msgCommError = /*[[#{job.manage.swal.comm_error}]]*/ '통신 오류';
+        const msgCommFail = /*[[#{job.manage.swal.comm_fail}]]*/ '서버와 연결할 수 없습니다.';
+        const langCode = /*[[${#locale.language}]]*/ 'ko';
+
+        const regionTokyo = /*[[#{region.tokyo}]]*/ '도쿄';
+        const regionOsaka = /*[[#{region.osaka}]]*/ '오사카';
+        /* ]]> */
+    </script>
+
+    <script defer th:src="@{/js/recruiter/main.js}"></script>
+    <script defer th:src="@{/js/recruiter/recruiterHeader.js}"></script>
+    <script defer th:src="@{/js/recruiter/global-calendar.js}"></script>
+    <script defer th:src="@{/js/recruiter/jobManage.js}"></script>
+</head>
+
+<body>
+<header th:replace="~{recruiterView/fragments/recruiterHeader :: headerFragment}"></header>
+
+<div class="dashboard-wrapper">
+    <div th:replace="~{recruiterView/fragments/sidebar :: sidebarFragment}"></div>
+
+    <div class="main-container">
+        <main class="content-body">
+            <div class="job-manage-card">
+                <div class="card-header-flex">
+                    <div class="header-left">
+                        <h2 class="table-title" th:text="#{job.manage.title}">공고 관리</h2>
+
+                        <div class="total-count-wrapper">
+                            <span class="count-label" th:text="#{job.manage.total_count}">전체 공고 수</span>
+                            <span class="count-badge" th:text="${#lists.size(jobList)}">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="kumo-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <a
+                                    th:href="@{/Recruiter/JobManage(sortBy='title', sortDir=${sortBy == 'title' && sortDir == 'asc' ? 'desc' : 'asc'})}">
+                                <span th:text="#{job.manage.table.title}">제목</span>
+                                <i th:classappend="${sortBy == 'title'} ? (${sortDir == 'asc'} ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                   class="fa-solid"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                    th:href="@{/Recruiter/JobManage(sortBy='region', sortDir=${sortBy == 'region' && sortDir == 'asc' ? 'desc' : 'asc'})}">
+                                <span th:text="#{job.manage.table.region}">지역</span>
+                                <i th:classappend="${sortBy == 'region'} ? (${sortDir == 'asc'} ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                   class="fa-solid"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                    th:href="@{/Recruiter/JobManage(sortBy='salary', sortDir=${sortBy == 'salary' && sortDir == 'asc' ? 'desc' : 'asc'})}">
+                                <span th:text="#{job.manage.table.wage}">급료</span>
+                                <i th:classappend="${sortBy == 'salary'} ? (${sortDir == 'asc'} ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                   class="fa-solid"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a
+                                    th:href="@{/Recruiter/JobManage(sortBy='date', sortDir=${sortBy == 'date' && sortDir == 'asc' ? 'desc' : 'asc'})}">
+                                <span th:text="#{job.manage.table.reg_date}">등록날짜</span>
+                                <i th:classappend="${sortBy == 'date'} ? (${sortDir == 'asc'} ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                   class="fa-solid"></i>
+                            </a>
+                        </th>
+                        <th th:text="#{job.manage.table.status}">상태</th>
+                        <th th:text="#{job.manage.table.manage}">관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="job : ${jobList}" th:classappend="${job.status == 'CLOSED'} ? 'job-closed-row' : ''">
+                        <td>
+                            <div class="job-title-cell">
+                    <span class="job-name text-truncate-custom"
+                          th:text="${(#locale.language == 'ja' and job.titleJp != null and job.titleJp != '') ? job.titleJp : job.title}">공고 제목</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border" th:if="${job.regionType == '도쿄'}" th:text="#{region.tokyo}">도쿄</span>
+                            <span class="badge bg-light text-dark border" th:if="${job.regionType == '오사카'}" th:text="#{region.osaka}">오사카</span>
+                        </td>
+                        <td>
+                            <span class="salary-text" th:if="${#locale.language == 'ko'}" th:text="${job.wage}">급여(한글)</span>
+                            <span class="salary-text" th:if="${#locale.language == 'ja'}" th:text="${job.wageJp}">給与(일어)</span>
+                            <span class="salary-text" th:if="${#locale.language != 'ko' and #locale.language != 'ja'}"
+                                  th:text="${job.wage}">급여(기본)</span>
+                        </td>
+                        <td><span class="date-text" th:text="${#temporals.format(job.createdAt, 'yyyy-MM-dd')}">등록일</span></td>
+                        <td>
+                  <span class="status-badge status-ing" th:if="${job.status == 'RECRUITING'}"
+                        th:text="#{job.manage.status.ing}">모집중</span>
+                            <span class="status-badge status-end" th:if="${job.status == 'CLOSED'}"
+                                  th:text="#{job.manage.status.end}">마감됨</span>
+                        </td>
+                        <td>
+                            <button th:if="${job.status == 'RECRUITING'}" type="button" class="btn-gear"
+                                    th:onclick="openJobModal([[${job.id}]], [[${job.datanum}]], [[${job.regionType}]], [[${job.title}]], [[${job.titleJp}]], [[${job.status}]])">
+                                <i class="bi bi-gear-fill"></i>
+                            </button>
+
+                            <button th:if="${job.status == 'CLOSED'}" type="button" class="btn-close-delete"
+                                    th:onclick="deletePosting([[${job.datanum}]], [[${job.regionType == '도쿄' ? 'TOKYO' : 'OSAKA'}]])">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(jobList)}">
+                        <td colspan="6" class="text-center py-5 text-muted">등록된 공고가 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+        <footer th:replace="~{NonLoginFragments/NonLoginFooter :: footerFragment}"></footer>
+    </div>
+    <div th:replace="~{recruiterView/fragments/rightSidebar :: rightSidebarFragment}"></div>
+</div>
+
+<div class="modal fade" id="jobManageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content job-modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" th:text="#{job.manage.modal.title}">공고 관리</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pt-4 pb-4">
+                <div class="mb-5 mt-2">
+            <span id="modalRegionBadge" class="badge bg-primary mb-3 px-3 py-2"
+                  style="font-size: 0.8rem; border-radius: 8px;">지역</span>
+                    <h4 id="modalJobTitle" class="text-truncate px-3 fw-bold job-modal-subtitle">공고 제목이 여기에 표시됩니다.</h4>
+                </div>
+
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn-job-view" id="btnViewJob">
+                        <i class="bi bi-eye me-1"></i> <span th:text="#{job.manage.btn.view}">보기</span>
+                    </button>
+                    <button type="button" class="btn-job-edit" id="btnEditJob">
+                        <i class="bi bi-pencil-square me-1"></i> <span th:text="#{job.manage.btn.edit}">수정</span>
+                    </button>
+                    <button type="button" class="btn-job-delete" id="btnDeleteJob">
+                        <i class="bi bi-trash3 me-1"></i> <span th:text="#{job.manage.btn.delete}">삭제</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/floatingChat :: floatingChatFragment}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js"></script>
+</body>
+</html>

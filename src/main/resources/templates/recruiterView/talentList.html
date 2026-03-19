@@ -1,0 +1,105 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="#{talent.detail.pageTitle}">KUMO RECRUITER - 인재 찾기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/recruiterHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/NonLoginFragments/NonLoginFooter.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/rightSidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/dark-theme.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/calendar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/talentList.css}" />
+    <script th:src="@{/js/recruiter/rightSidebar.js}"></script>
+</head>
+
+<body>
+    <header th:replace="~{recruiterView/fragments/recruiterHeader :: headerFragment}"></header>
+
+    <div class="dashboard-wrapper">
+        <div th:replace="~{recruiterView/fragments/sidebar :: sidebarFragment}"></div>
+
+        <div class="main-container">
+            <main class="content-body">
+                <div class="talent-list-wrapper">
+
+                    <!-- 전체 감싸는 카드 -->
+                    <div class="talent-outer-card">
+
+                        <!-- 헤더 -->
+                        <div class="talent-list-header">
+                            <div>
+                                <h2 th:text="#{main.panel.scout_status}">인재 스카우트</h2>
+                                <p th:text="#{resume.notice.scout1}">조건에 맞는 인재를 찾아보세요.</p>
+                            </div>
+<div class="talent-total-count">
+    <span th:text="#{talent.scout.count}">스카우트 수</span>&nbsp;
+    <span class="count-num" th:text="${talents?.size() ?: 0}">0</span>
+    <span th:text="#{talent.unit.person}">명</span>
+</div>
+                        </div>
+
+                        <!-- 빈 상태 -->
+                        <div th:if="${talents == null or #lists.isEmpty(talents)}" class="talent-empty">
+                            <i class="fa-solid fa-users-slash"></i>
+                            <p th:text="#{main.scout.empty}">활동 중인 인재가 없습니다.</p>
+                        </div>
+
+                        <!-- 인재 리스트 -->
+                        <div class="talent-list" th:if="${talents != null and !#lists.isEmpty(talents)}">
+                            <div class="talent-card" th:each="t : ${talents}"
+                                th:onclick="|location.href='/Recruiter/TalentDetail?userId=${t.user.userId}'|">
+                                <div class="talent-main">
+                                    <img class="talent-avatar"
+                                        th:src="${t.user.profileImage?.fileUrl ?: '/images/common/default_profile.png'}"
+                                        alt="avatar">
+                                    <div class="talent-info">
+                                        <div class="talent-name-row">
+                                            <span class="name-text" th:text="${#strings.length(t.user.nameKanjiMei ?: t.user.nickname) > 1
+                                ? #strings.substring(t.user.nameKanjiMei ?: t.user.nickname, 0, 1)
+                                  + '*'
+                                  + #strings.substring(t.user.nameKanjiMei ?: t.user.nickname,
+                                      #strings.length(t.user.nameKanjiMei ?: t.user.nickname)-1)
+                                : t.user.nameKanjiMei ?: t.user.nickname}">이름</span>
+                                            <span class="career-badge"
+                                                th:classappend="${t.careerType == 'EXPERIENCED' ? 'badge-exp' : 'badge-new'}"
+                                                th:text="${t.careerType == 'EXPERIENCED'
+                                ? #messages.msg('resume.btn.experienced')
+                                : #messages.msg('resume.btn.newcomer')}">경력</span>
+                                        </div>
+                                        <div class="pr-text" th:text="${t.selfPr ?: '등록된 자기소개가 없습니다.'}">자기소개...</div>
+                                    </div>
+                                </div>
+                                <div class="talent-action">
+                                    <button class="btn-view" th:text="#{main.btn.view_detail}">상세보기</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /talent-outer-card -->
+                </div><!-- /talent-list-wrapper -->
+            </main>
+
+            <footer th:replace="~{NonLoginFragments/NonLoginFooter :: footerFragment}"></footer>
+            <div th:replace="~{recruiterView/fragments/rightSidebar :: rightSidebarFragment}"></div>
+        </div>
+        
+    </div>
+
+    <th:block th:replace="~{fragments/floatingChat :: floatingChatFragment}"></th:block>
+
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/recruiter/main.js}"></script>
+    <script th:src="@{/js/recruiter/recruiterHeader.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js"></script>
+    <script th:src="@{/js/recruiter/global-calendar.js}"></script>
+</body>
+
+</html>

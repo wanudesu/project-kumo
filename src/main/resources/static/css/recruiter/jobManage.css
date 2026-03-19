@@ -1,0 +1,577 @@
+/* 1. 메인 카드 영역 (지원자 페이지와 100% 동일한 크기 및 여백) */
+.job-manage-card {
+  background: white;
+  border-radius: 25px;
+  padding: 30px;
+  /* 기존 35px 40px에서 30px로 통일 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  margin-left: 0;
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+}
+
+/* 2. 상단 헤더 정렬 (지원자 페이지와 동일) */
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+/* 3. 공고 관리 타이틀 텍스트 (지원자 페이지 1.4rem 동일 적용) */
+.table-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #333d4b;
+  margin: 0 0 10px 0;
+}
+
+/* 2. 테이블 레이아웃: 줄바꿈 방지 및 너비 100% 맞춤 */
+.kumo-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  /* 칸 너비 강제 고정 */
+}
+
+/* 🌟 총 6개 컬럼의 합을 정확히 100%로 재설정했습니다! */
+.kumo-table th:nth-child(1) {
+  width: 35%;
+}
+
+/* 공고 제목 (더 넓고 시원하게!) */
+.kumo-table th:nth-child(2) {
+  width: 10%;
+}
+
+/* 지역 */
+.kumo-table th:nth-child(3) {
+  width: 20%;
+}
+
+/* 급료 (더 넉넉하게) */
+.kumo-table th:nth-child(4) {
+  width: 15%;
+}
+
+/* 등록 날짜 */
+.kumo-table th:nth-child(5) {
+  width: 10%;
+}
+
+/* 마감여부 */
+.kumo-table th:nth-child(6) {
+  width: 10%;
+  text-align: center;
+}
+
+/* 관리 버튼 */
+
+.kumo-table th {
+  text-align: left;
+  padding: 15px 10px;
+  color: #b0b8c1;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f9f9f9;
+  white-space: nowrap;
+}
+
+.kumo-table td {
+  padding: 20px 10px;
+  border-bottom: 1px solid #f9f9f9;
+  font-size: 0.9rem;
+  color: #333d4b;
+  vertical-align: middle;
+
+  /* 🌟 글자 넘침 방지 3대장 (필수!) */
+  white-space: nowrap;
+  /* 1. 줄바꿈 방지 */
+  overflow: hidden;
+  /* 2. 칸 넘어가면 숨기기 */
+  text-overflow: ellipsis;
+  /* 3. 숨긴 부분은 '...'으로 표시 */
+}
+
+/* 🌟 관리 컬럼(7번째)은 톱니바퀴가 예쁘게 가운데 오도록 세팅 */
+.kumo-table td:nth-child(7) {
+  text-align: center;
+  overflow: visible;
+  /* 버튼 주변 그림자나 효과가 잘리지 않게 설정 */
+}
+
+/* 3. 화살표 위치 강제 고정 */
+.sort-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* 텍스트와 화살표 사이 간격 */
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  color: #b0b8c1;
+  flex-shrink: 0; /* 화살표가 찌그러지지 않게 고정 */
+}
+
+.kumo-table td {
+  padding: 20px 10px;
+  border-bottom: 1px solid #f9f9f9;
+  font-size: 0.9rem;
+  color: #333d4b;
+  vertical-align: middle;
+  white-space: nowrap; /* [핵심] 모든 데이터 줄바꿈 방지 */
+}
+
+/* 4. 전광판 효과 (줄바꿈 없이 흐르게 설정) */
+.marquee-box {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  will-change: transform;
+  animation: marquee 12s linear infinite;
+  animation-delay: 2s;
+}
+
+@keyframes marquee {
+  0%,
+  20% {
+    transform: translateX(0);
+  }
+  80%,
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* 5. 디자인 요소 */
+.job-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.job-name {
+  font-weight: 700;
+  color: #333d4b;
+}
+.badge-tag {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.status-ing {
+  background-color: #edffed;
+  color: #5cb85c;
+}
+.status-end {
+  background-color: #ffeeee;
+  color: #ff5c5c;
+}
+
+/* 6. 버튼 정렬 (짤림 없이 한 줄로) */
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-start;
+}
+
+.btn-manage,
+.btn-close-job {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 52px; /* 버튼을 살짝 더 줄여서 공간 확보 */
+  text-align: center;
+  color: white;
+  flex-shrink: 0;
+}
+.btn-manage {
+  background-color: #7db4e6;
+}
+.btn-close-job {
+  background-color: #b0b8c1;
+}
+
+.salary-text {
+  color: #7db4e6;
+  font-weight: 700;
+}
+.contact-text,
+.date-text {
+  color: #8b95a1;
+}
+
+/* 마감된 행의 텍스트 색상을 약간 흐리게 */
+.job-closed td {
+  color: #b0b8c1 !important;
+}
+
+.job-closed .job-name {
+  color: #8b95a1;
+}
+
+.job-closed .salary-text {
+  color: #b0b8c1 !important; /* 파란색 대신 회색으로 */
+}
+
+/* 마감 배지 스타일 (이미 있으시겠지만 확정용) */
+.status-end {
+  background-color: #ffeeee !important;
+  color: #ff5c5c !important;
+}
+
+/* =========================================
+   🌟 공고 관리 모달창 커스텀 (스케줄 모달 기반)
+========================================= */
+
+/* --- 1. 라이트 모드 기본 설정 --- */
+.job-modal-content {
+  background-color: #ffffff !important;
+  border-radius: 25px !important;
+  border: none !important;
+  padding: 20px !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1) !important;
+}
+
+.job-modal-content .modal-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.job-modal-content .btn-close {
+  position: absolute;
+  right: 20px;
+  top: 25px;
+}
+
+.job-modal-subtitle {
+  color: #333d4b;
+}
+
+/* --- 버튼 공통 스타일 --- */
+.btn-job-view,
+.btn-job-edit,
+.btn-job-delete {
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 보기 버튼 (취소/일반 버튼 느낌) */
+.btn-job-view {
+  background: #ffffff;
+  color: #8b95a1;
+  border: 1px solid #e5e8eb;
+}
+
+.btn-job-view:hover {
+  background: #f4f6f8;
+  border-color: #d0d5db;
+  color: #4e5968;
+}
+
+/* 수정 버튼 (제출/강조 버튼 느낌) */
+.btn-job-edit {
+  background: #7db4e6;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-job-edit:hover {
+  background: #5aa3f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(122, 186, 255, 0.4);
+}
+
+/* 삭제 버튼 (경고 느낌) */
+.btn-job-delete {
+  background: #fff0f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.btn-job-delete:hover {
+  background: #ff4d4f;
+  color: #ffffff;
+  border-color: #ff4d4f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+}
+
+
+/* --- 2. 다크 모드 (body.dark-mode) --- */
+body.dark-mode .job-modal-content {
+  background-color: #222222 !important;
+  border-radius: 25px !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .job-modal-content .modal-title,
+body.dark-mode .job-modal-subtitle {
+  color: #ffffff !important;
+}
+
+body.dark-mode .job-modal-content .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+/* 다크모드 - 보기 버튼 */
+body.dark-mode .btn-job-view {
+  background-color: #2d2d2d !important;
+  border-color: #333d4b !important;
+  color: #aaaaaa !important;
+}
+
+body.dark-mode .btn-job-view:hover {
+  background-color: #3d3d3d !important;
+  color: #ffffff !important;
+}
+
+/* 다크모드 - 삭제 버튼 */
+body.dark-mode .btn-job-delete {
+  background: #3a1a1a !important;
+  color: #ff6b6b !important;
+  border-color: #5a2a2a !important;
+}
+
+body.dark-mode .btn-job-delete:hover {
+  background: #ff4d4f !important;
+  color: #ffffff !important;
+}
+
+/* =========================================
+   🌟 전체 공고 수 카운터 뱃지 스타일
+========================================= */
+/* =========================================
+   🌟 전체 공고 수 카운터 (크기 축소 & 위치 고정)
+========================================= */
+/* 제목과 뱃지를 세로로 예쁘게 정렬 */
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* 제목과 뱃지 사이 간격 */
+}
+
+.total-count-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* 글자와 뱃지 사이 간격 */
+}
+
+/* 글자 크기 다이어트 (1.1rem -> 0.9rem) */
+.count-label {
+  font-size: 0.9rem;
+  color: #8b95a1;
+  /* 지원자 페이지와 동일한 은은한 회색 */
+}
+
+.count-badge {
+  background-color: #e8f3ff;
+  color: #7db4e6;
+  padding: 0px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* =========================================
+   🌟 관리 버튼 (톱니바퀴) 가운데 정렬 & 디자인
+========================================= */
+
+/* 1. 6번째 칸(관리)을 완벽한 정중앙으로 세팅 */
+.kumo-table th:nth-child(6),
+.kumo-table td:nth-child(6) {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+/* 2. 톱니바퀴 버튼 배경/테두리 제거 */
+.btn-gear {
+  background: transparent;
+  /* 배경 투명하게 */
+  border: none;
+  /* 테두리 제거 */
+  color: #a0aec0;
+  /* 은은한 회색 */
+  font-size: 1.25rem;
+  /* 아이콘 크기 살짝 키움 */
+  padding: 5px;
+  /* 클릭 영역 확보 */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* 3. 마우스 올렸을 때 효과 (색상 변경 + 회전 애니메이션) */
+.btn-gear:hover {
+  color: #7db4e6;
+  /* 사장님 메인 파란색으로 변신 */
+  transform: rotate(90deg);
+  /* 톱니바퀴가 찌잉~ 하고 돌아가는 귀여운 디테일 */
+}
+
+/* 마감된 공고 행 스타일링 */
+.job-closed-row {
+  opacity: 0.6;
+  /* 흐리게 */
+  background-color: rgba(0, 0, 0, 0.02);
+  /* 살짝 어둡게 */
+}
+
+.job-closed-row .job-name {
+  text-decoration: line-through;
+  /* 제목에 취소선 (선택사항) */
+  color: #8b95a1;
+}
+
+/* 1. 두 버튼의 규격을 완전히 통일 (공통 분모) */
+.btn-gear,
+.btn-close-delete {
+  background: transparent !important;
+  /* 배경 제거 */
+  border: none !important;
+  padding: 0 !important;
+  width: 32px;
+  /* 버튼 전체 크기 */
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  /* 은은한 클릭 영역 확보 */
+}
+
+/* 2. X 버튼 개별 스타일 (크기 축소 및 색상) */
+.btn-close-delete {
+  color: #8b95a1;
+  /* 기본 회색 */
+  font-size: 1rem;
+  /* 🌟 아이콘 크기를 살짝 줄임 (기존보다 작게) */
+}
+
+/* 3. 호버 효과: 배경 대신 아이콘 색상만 변경 */
+.btn-close-delete:hover {
+  color: #ff4d4f !important;
+  /* 삭제 암시용 레드 */
+  background-color: rgba(255, 77, 79, 0.05) !important;
+  /* 아주 연한 붉은 광채만 추가 */
+}
+
+/* 4. 다크모드 대응 */
+body.dark-mode .btn-close-delete {
+  color: #555555;
+}
+
+body.dark-mode .btn-close-delete:hover {
+  color: #ff6b6b !important;
+  background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+/* ===================================================
+   마감된 공고 행(Row) 비활성화 스타일
+   =================================================== */
+
+/* [라이트 모드] */
+.job-closed-row {
+  background-color: #fcfcfc !important;
+  border-bottom: 1px solid #f2f4f6 !important;
+}
+
+.job-closed-row td {
+  opacity: 0.8;
+  /* 🌟 반투명하게 만들어 시선을 피하게 함 */
+  filter: grayscale(0.8);
+  /* 색감을 살짝 뺌 */
+}
+
+.job-closed-row .job-name {
+  color: #adb5bd !important;
+}
+
+/* [다크 모드] */
+body.dark-mode .job-closed-row {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  border-bottom: 1px solid #252525 !important;
+}
+
+body.dark-mode .job-closed-row td {
+  opacity: 0.7;
+  /* 다크모드에선 더 어둡게 처리 */
+}
+
+body.dark-mode .job-closed-row .job-name {
+  color: #555555 !important;
+}
+
+/* 마감된 줄 호버 시 반응 최소화 */
+.job-closed-row:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* 🌟 X 버튼은 삭제를 위해 호버 시에만 다시 선명하게! */
+.job-closed-row .btn-close-delete {
+  transition: opacity 0.2s;
+}
+
+.job-closed-row:hover .btn-close-delete {
+  opacity: 1 !important;
+  color: #ff4d4f !important;
+}
+
+/* 정렬 링크 스타일 초기화 */
+.kumo-table th a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.kumo-table th a:hover {
+  color: #7db4e6;
+}
+
+.kumo-table th a i {
+  font-size: 11px;
+  color: #bbb;
+}
+
+.kumo-table th a i.fa-sort-up,
+.kumo-table th a i.fa-sort-down {
+  color: #7db4e6;
+}
+
+/* 다크모드 */
+body.dark-mode .kumo-table th a {
+  color: inherit;
+}
+
+body.dark-mode .kumo-table th a:hover {
+  color: #7db4e6;
+}

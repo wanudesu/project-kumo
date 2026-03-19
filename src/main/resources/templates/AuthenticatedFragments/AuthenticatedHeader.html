@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="headerFragment">
+
+    <header class="authenticated-header">
+        <link rel="stylesheet" th:href="@{/css/AuthenticatedFragments/AuthenticatedHeader.css}"
+              sec:authorize="isAuthenticated()">
+
+        <div class="sidebar-logo">
+            <a th:href="@{/(lang=${#locale.language})}" class="logo">
+                <img th:src="@{/images/NonLogin/seekerLogo.png}" alt="KUMO" style="height: 40px;">
+            </a>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li><a th:href="@{/info(lang=${#locale.language})}" th:text="#{header.company}">회사 정보</a></li>
+
+                <li class="icon-btn notification-container" id="notifyBtn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notify-badge" style="display: none;">0</span>
+
+                    <div class="notify-dropdown" id="notifyMenu">
+                        <div class="notify-header">
+                            <span th:text="#{header.notifications}">알림</span>
+                            <div class="header-buttons">
+                                <button class="header-btn read-all" id="markAllReadBtn" th:text="#{header.mark_read}">모두 읽음</button>
+                                <span class="divider">|</span>
+                                <button class="header-btn delete-all" id="deleteAllBtn" 
+                                        th:text="#{header.delete_all}"
+                                        th:data-confirm="#{header.delete_all_confirm}">전체 삭제</button>
+                            </div>
+                        </div>
+
+                        <div class="notify-body" id="notifyList">
+                            <div class="notify-empty" id="notifyEmpty" style="display: none;">
+                                <i class="fa-regular fa-bell-slash"></i>
+                                <p th:text="#{notification.empty}">새로운 알림이 없습니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="notify-footer" id="expandBtn"
+                             th:data-more="#{notification.more}"
+                             th:data-fold="#{notification.fold}">
+                            <span th:text="#{notification.more}">더 보기</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="icon-btn lang-container" id="langBtn">
+                    <i class="fa-solid fa-globe"></i>
+                    <div class="lang-dropdown" id="langMenu">
+                        <a href="javascript:changeLang('ko')" class="lang-item">한국어</a>
+                        <a href="javascript:changeLang('ja')" class="lang-item">日本語</a>
+                    </div>
+                </li>
+
+                <li class="icon-btn" id="darkModeBtn">
+                    <i class="fa-regular fa-sun" id="darkModeIcon"></i>
+                </li>
+
+                <li class="profile-container" id="profileBtn">
+                    <img th:src="${profileImageUrl ?: '/images/common/default_profile.png'}"
+                         class="user-avatar" alt="Profile">
+
+                    <div class="profile-dropdown" id="profileMenu">
+                        <div class="profile-info">
+                            <span class="user-name" th:text="${#authentication.principal.nickname}">User</span>
+                            <span class="user-email" th:text="${#authentication.name}">email@test.com</span>
+                        </div>
+                        <hr>
+                        <a th:href="@{/Seeker/MyPage(lang=${#locale.language})}" class="profile-item">
+                            <i class="fa-regular fa-user"></i>
+                            <span th:text="#{profile.mypage}">마이페이지</span>
+                        </a>
+                        <a th:href="@{/Seeker/resume(lang=${#locale.language})}" class="profile-item">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <span th:text="#{profile.resume}">내 이력서</span>
+                        </a>
+                        <a th:href="@{/Seeker/history(lang=${#locale.language})}" class="profile-item">
+                            <i class="fa-regular fa-bell"></i>
+                            <span th:text="#{profile.history}">지원 내역 확인</span>
+                        </a>
+                        <a th:href="@{/Seeker/scout(lang=${#locale.language})}" class="profile-item">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                            <span th:text="#{sidebar.scout}">스카우트 현황</span>
+                        </a>
+                        <hr>
+                        <a th:href="@{/logout(lang=${#locale.language})}" class="profile-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span th:text="#{profile.logout}">로그아웃</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <script th:inline="javascript">
+        /* <![CDATA[ */
+        (function () {
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                const root = document.documentElement;
+                root.classList.add('dark-mode');
+
+                document.write(
+                    '<style id="anti-flicker-css">' +
+                    '  *:not(.no-prevent-transition) { transition: none !important; }' +
+                    '  html, body { background-color: #1e1f21 !important; color: #e3e5e8 !important; margin: 0; padding: 0; }' +
+
+                    '  body > *:not(header):not(.authenticated-header):not(.custom-header):not(script):not(style) { ' +
+                    '    opacity: 0 !important; visibility: hidden !important; ' +
+                    '  }' +
+
+                    '  .authenticated-header, .custom-header, .non-login-header {' +
+                    '    background-color: #1e1f21 !important;' +
+                    '    border-bottom: 1px solid #37393d !important;' +
+                    '    display: flex !important;' +
+                    '    opacity: 1 !important; visibility: visible !important;' +
+                    '  }' +
+
+                    '  .authenticated-header *, .custom-header *, .non-login-header * {' +
+                    '    color: #e3e5e8 !important;' +
+                    '    border-color: #37393d !important;' +
+                    '  }' +
+
+                    '  .sidebar-container, aside.sidebar {' +
+                    '    background-color: #1e1f21 !important;' +
+                    '    border-right: 1px solid #37393d !important;' +
+                    '  }' +
+                    '</style>'
+                );
+
+                window.addEventListener('DOMContentLoaded', function () {
+                    setTimeout(function () {
+                        const flickerStyle = document.getElementById('anti-flicker-css');
+                        if (flickerStyle) flickerStyle.remove();
+
+                                // ✅ 추가: 숨겨진 요소들 명시적으로 다시 보이게
+                        document.querySelectorAll('body > *').forEach(el => {
+                            el.style.opacity = '';
+                            el.style.visibility = '';
+                        });
+                    }, 0);
+                });
+            }
+        })();
+        /* ]]> */
+    </script>
+
+    <!-- 🌟 인라인 스크립트를 제거하고 외부 파일로 통일 -->
+    <script th:src="@{/js/AuthenticatedHeader/AuthenticatedHeader.js}"></script>
+</div>
+</html>

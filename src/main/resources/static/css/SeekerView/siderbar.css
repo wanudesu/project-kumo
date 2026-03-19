@@ -1,0 +1,213 @@
+@charset "UTF-8";
+
+/* ============================================================
+   KUMO - 구직자 사이드바 통합 디자인 (Recruiter Style 이식)
+   ============================================================ */
+
+   /* --- 사이드바 로고 영역 --- */
+   .sidebar-logo-link {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       /* 🌟 로고를 정중앙으로! */
+       padding: 16px 0;
+       /* 🌟 완벽한 중앙을 위해 좌우 여백 제거 */
+       margin-bottom: 10px;
+       text-decoration: none;
+   }
+
+   /* 로고 이미지 크기 */
+   .sidebar-logo-link img {
+       height: 36px;
+   }
+
+/* 1. 사이드바 전체 컨테이너 (aside.sidebar) */
+aside.sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    background-color: #ffffff;
+    border-right: 1px solid #eee;
+    box-sizing: border-box;
+    z-index: 1030;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+/* 2. 상단 내비게이션 영역 */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    /* 헤더 높이만큼 여백 */
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 메뉴 공통 아이템 (a 태그) */
+.sidebar-nav ul li a {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #727385;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.sidebar-nav ul li a i {
+    width: 24px;
+    margin-right: 10px;
+    font-size: 16px;
+    text-align: center;
+    color: #bbb !important;
+}
+
+/* 🌟 선택된 메뉴 (li.active) 및 호버 상태 */
+
+.sidebar-nav ul li.active a,
+.sidebar-nav ul li a:hover {
+    background-color: #f0f7ff;
+    /* #f0f9ff → 약간 더 차분하게 */
+    color: #7db4e6;
+    /* #42a5f5 → KUMO 시그니처 블루 */
+    border-left: 4px solid #7db4e6;
+    font-weight: 500;
+}
+
+.sidebar-nav ul li.active a i,
+.sidebar-nav ul li a:hover i {
+    color: #7db4e6 !important;
+}
+
+/* 3. 하단 영역 (로그아웃 버튼) */
+.sidebar-footer {
+    padding-bottom: 20px;
+}
+
+/* 1. 로그아웃 감싸는 박스를 맨 바닥으로 밀기 */
+.sidebar-footer {
+    margin-top: auto;
+    /* 🌟 이 한 줄이 버튼을 맨 아래로 보냅니다 */
+    padding-bottom: 20px;
+    /* 바닥에서 살짝 띄우기 */
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #727385;
+    background-color: transparent;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-logout i {
+    width: 24px;
+    margin-right: 10px;
+    font-size: 16px;
+    text-align: center;
+    color: #bbb !important;
+}
+
+/* 로그아웃 버튼 호버 시 디자인 */
+.btn-logout:hover {
+    background-color: #ff5a5a;
+    color: #ffffff;
+    border-left-color: #ff5a5a;
+}
+
+.btn-logout:hover i {
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   🚨 로그아웃 버튼 호버 시 디자인 (KUMO 소프트 레드)
+   ============================================================ */
+
+/* 라이트 모드: 연한 핑크빛 배경에 빨간 글씨/테두리 */
+.btn-logout:hover {
+    background-color: #fff0f0;
+    /* 꽉 찬 빨강 대신, 아주 연한 핑크톤 배경 */
+    color: #ff5a5a;
+    /* 글자를 빨간색으로 포인트 */
+    border-left-color: #ff5a5a;
+    /* 테두리 빨간색 */
+}
+
+.btn-logout:hover i {
+    color: #ff5a5a !important;
+    /* 아이콘도 빨간색으로 통일 */
+}
+
+/* ============================================================
+   🌙 다크모드 로그아웃 버튼 (Warm-Dark 맞춤)
+   ============================================================ */
+
+body.dark-mode .btn-logout {
+    color: #ccc;
+    background-color: transparent;
+    border-left: 4px solid transparent;
+}
+
+body.dark-mode .btn-logout:hover {
+    background-color: rgba(255, 107, 107, 0.08) !important;
+    /* 투명도 8%의 은은한 붉은빛 맴도는 배경 */
+    color: #ff6b6b !important;
+    /* 다크모드에 맞는 부드러운 빨강 텍스트 */
+    border-left-color: #ff6b6b !important;
+}
+
+body.dark-mode .btn-logout:hover i {
+    color: #ff6b6b !important;
+}
+
+/* 4. 다크모드 대응 (Dark Mode) */
+body.dark-mode aside.sidebar {
+    background-color: #1e1f21 !important;
+    /* 사장님이 원하신 찐다크 */
+    border-right-color: #37393d;
+}
+
+body.dark-mode .sidebar-nav ul li a {
+    color: #ccc;
+}
+
+body.dark-mode .sidebar-nav ul li a i {
+    color: #f4f4f4 !important;
+}
+
+body.dark-mode .sidebar-nav ul li.active a,
+body.dark-mode .sidebar-nav ul li a:hover {
+    background-color: #2e3035 !important;
+    /* #2a3441 → #2e3035 */
+    color: #7db4e6;
+    border-left-color: #7db4e6;
+}
+
+body.dark-mode .sidebar-nav ul li.active a i,
+body.dark-mode .sidebar-nav ul li a:hover i {
+    color: #7db4e6 !important;
+}
+
+

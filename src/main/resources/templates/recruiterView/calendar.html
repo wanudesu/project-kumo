@@ -1,0 +1,179 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>KUMO RECRUITER - 일정 관리</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/recruiterHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/NonLoginFragments/NonLoginFooter.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/calendar.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/companyInfo.css}" />
+    <link rel="stylesheet" th:href="@{/css/recruiter/dark-theme.css}" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/index.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js"></script>
+
+    <script th:inline="javascript">
+        /* <![CDATA[ */
+        const CURRENT_LANG = /*[[${#locale.language}]]*/ 'ko';
+
+        const calMsg = {
+            titleAdd:          /*[[#{cal.modal.title_add}]]*/ '스케줄 등록',
+            titleEdit:         /*[[#{cal.modal.title_edit}]]*/ '스케줄 수정',
+            btnSubmitEdit:     /*[[#{cal.btn.submit_edit}]]*/ '수정 완료',
+            errorTimeRange:    /*[[#{cal.error.time_range}]]*/ '종료 시간은 시작 시간보다 늦어야 합니다.',
+            scheduleTitle:     /*[[#{cal.sidebar.schedule_suffix}]]*/ ' 일정',
+            noSchedule:        /*[[#{cal.sidebar.no_schedule}]]*/ '일정이 없습니다.',
+            errorRequired:     /*[[#{cal.error.required}]]*/ '주제와 날짜를 확인해 주세요!',
+            dragDeleteTitle:   /*[[#{cal.swal.drag_delete.title}]]*/ '일정 삭제',
+            dragDeleteText:    /*[[#{cal.swal.drag_delete.text}]]*/ '일정을 삭제하시겠습니까?',
+            dragDeleteConfirm: /*[[#{cal.swal.drag_delete.confirm}]]*/ '네, 삭제할게요!',
+            deleteTitle:       /*[[#{cal.swal.delete.title}]]*/ '정말 삭제하시겠습니까?',
+            deleteText:        /*[[#{cal.swal.delete.text}]]*/ '삭제한 일정은 복구할 수 없습니다.',
+            deleteConfirm:     /*[[#{cal.swal.delete.confirm}]]*/ '삭제',
+            deleteSuccess:     /*[[#{cal.swal.delete.success_title}]]*/ '삭제 완료!',
+            deleteSuccessText: /*[[#{cal.swal.delete.success_text}]]*/ '일정이 깔끔하게 지워졌습니다.',
+            saveSuccess:       /*[[#{cal.swal.save.success}]]*/ '저장되었습니다.',
+            cancel:            /*[[#{cal.btn.cancel}]]*/ '취소',
+            errorTitle:        /*[[#{cal.swal.error.title}]]*/ '오류',
+            errorMove:         /*[[#{cal.swal.error.move}]]*/ '일정 이동에 실패했습니다. 서버를 확인해주세요.',
+            errorSave:         /*[[#{cal.swal.error.save}]]*/ '저장에 실패했습니다.',
+            errorDelete:       /*[[#{cal.swal.error.delete}]]*/ '삭제 실패! 서버 에러를 확인하세요.'
+        };
+        /* ]]> */
+    </script>
+
+    <script defer th:src="@{/js/recruiter/recruiterHeader.js}"></script>
+    <script defer th:src="@{/js/recruiter/main.js}"></script>
+    <script defer th:src="@{/js/recruiter/calendar.js}"></script>
+</head>
+
+<body>
+<header th:replace="~{recruiterView/fragments/recruiterHeader :: headerFragment}"></header>
+
+<div class="dashboard-wrapper">
+    <div th:replace="~{recruiterView/fragments/sidebar :: sidebarFragment}"></div>
+
+    <div class="main-container" style="margin-right: 0; display: flex; flex-direction: column; min-height: 100vh;">
+        <main class="content-body" style="flex: 1;">
+            <div class="calendar-main-layout">
+                <div class="calendar-left-content">
+                    <div id="calendar"></div>
+                </div>
+
+                <aside class="calendar-side-area">
+                    <div class="schedule-full-panel">
+                        <div class="panel-header" id="selected-date-title" th:text="#{main.panel.today_schedule}">
+                            오늘의 일정
+                        </div>
+                        <div id="event-list-container" class="event-scroll-area">
+                            <div class="empty-state">
+                                <i class="bi bi-calendar-check d-block mb-3 fs-1"></i>
+                                <span th:utext="#{main.sidebar.no_schedule_guide}">날짜를 클릭하여<br />일정을 확인하세요.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="side-action-buttons">
+                        <button class="btn btn-common-action btn-sky-blue w-100 shadow-sm" data-bs-toggle="modal"
+                                data-bs-target="#scheduleModal" onclick="prepareNewSchedule()">
+                            <span th:text="#{cal.btn.add_schedule}">스케줄 등록</span>
+                        </button>
+                        <div id="deleteDropZone" class="delete-drop-zone w-100 shadow-sm mt-2">
+                            <i class="bi bi-trash3 me-1"></i>
+                            <span th:text="#{cal.drag.delete_area}">여기로 끌어서 삭제</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+        <footer th:replace="~{NonLoginFragments/NonLoginFooter :: footerFragment}"></footer>
+    </div>
+</div>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content schedule-modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100 text-center fw-bold" th:text="#{cal.modal.title_add}">스케줄 등록</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="scheduleForm">
+                    <div class="row mb-4 align-items-center">
+                        <label class="col-3 modal-label" th:text="#{cal.modal.label.subject}">주제</label>
+                        <div class="col-9">
+                            <input type="text" id="scheduleTitle" class="kumo-modal-input"
+                                   th:placeholder="#{cal.modal.placeholder.subject}" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-4 align-items-center">
+                        <label class="col-3 modal-label" th:text="#{cal.modal.label.date}">날짜</label>
+                        <div class="col-9">
+                            <div class="time-range-wrapper">
+                                <input type="date" id="scheduleDate" required />
+                                <div class="custom-time-input">
+                                    <select id="startHour"></select>
+                                    <span>:</span>
+                                    <select id="startMin"></select>
+                                </div>
+                                <span class="time-separator">~</span>
+                                <div class="custom-time-input">
+                                    <select id="endHour"></select>
+                                    <span>:</span>
+                                    <select id="endMin"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <label class="col-3 modal-label mt-2" th:text="#{cal.modal.label.detail}">상세정보</label>
+                        <div class="col-9">
+                <textarea id="scheduleDescription" class="kumo-modal-textarea" rows="4"
+                          th:placeholder="#{cal.modal.placeholder.detail}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5 align-items-center">
+                        <label class="col-3 modal-label" th:text="#{cal.modal.label.color}">색상</label>
+                        <div class="col-9 d-flex gap-3 color-picker-wrapper">
+                            <div class="color-dot active" style="background-color: #ff6b6b;" data-color="#ff6b6b"></div>
+                            <div class="color-dot" style="background-color: #ffbb33;" data-color="#ffbb33"></div>
+                            <div class="color-dot" style="background-color: #ccff33;" data-color="#ccff33"></div>
+                            <div class="color-dot" style="background-color: #33ff66;" data-color="#33ff66"></div>
+                            <div class="color-dot" style="background-color: #7db4e6;" data-color="#7db4e6"></div>
+                            <div class="color-dot" style="background-color: #555abf;" data-color="#555abf"></div>
+                            <div class="color-dot" style="background-color: #cc66ff;" data-color="#cc66ff"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center w-100">
+                        <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                            <span th:text="#{cal.btn.cancel}">취소</span>
+                        </button>
+                        <button type="button" class="btn-modal-delete" id="btnDelete" onclick="deleteSchedule()" style="display: none;">
+                            <span th:text="#{cal.btn.delete}">삭제</span>
+                        </button>
+                        <button type="button" class="btn-modal-submit" onclick="saveSchedule()">
+                            <span th:text="#{cal.modal.title_add}">스케줄 등록</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

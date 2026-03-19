@@ -1,0 +1,967 @@
+@charset "UTF-8";
+
+/* ==================================================
+   [v3] 하늘색 테마 디자인 적용 (레이아웃 유지)
+   ================================================== */
+
+/* ✅ 폰트어썸 아이콘(<i> 태그)만 빼고 Noto Sans KR 강제 적용! */
+*:not(i) {
+    font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+/* 🌟 혹시 몰라 추가하는 고집 센 녀석들 (이건 그대로 유지하세요) */
+body,
+input,
+textarea,
+button,
+select {
+    font-family: 'Noto Sans KR', sans-serif !important;
+}
+
+/* 기본 초기화 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+body {
+    background-color: #e6f3ff;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.mobile-container {
+    width: 480px;
+    background-color: #e6f3ff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================================================
+   1. 헤더 (확장형 - 컴팩트 버전)
+   ================================================== */
+.chat-header {
+    position: relative;
+    flex: 0 0 auto;
+    background-color: #d0e8ff;
+    padding: 10px 15px;
+    border-bottom: 1px solid #c0dfff;
+    z-index: 10;
+    display: flex;
+    /* 🌟 세로(column)에서 가로(row)로 변경하여 슬림하게 만듦 */
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px; /* 불필요하게 컸던 높이를 메신저답게 줄임 */
+}
+
+.header-back-btn {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    z-index: 12;
+}
+
+/* 번역 버튼 (우측 고정) */
+.header-translate-btn {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 11;
+    transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out;
+}
+
+.header-translate-btn:hover .translate-icon-img {
+    filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.4));
+}
+
+.header-translate-btn:active {
+    transform: translateY(-50%) scale(0.9);
+    opacity: 0.7;
+}
+
+.translate-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    transition: filter 0.2s ease-in-out;
+}
+
+/* 🌟 복구 및 최적화된 중앙 정렬 구역 */
+.header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 40px; /* 양옆 버튼(뒤로가기, 번역)과 겹치지 않게 보호 여백 */
+}
+
+/* 사진과 닉네임 나란히 배치 */
+.store-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 사진과 이름 사이 간격 촘촘하게 */
+}
+
+.header-store-img {
+    width: 36px; /* 기존보다 살짝 키워서 시원하게 */
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white; /* 프로필 테두리 강조 */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* 은은한 입체감 */
+}
+
+.header-store-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* ==================================================
+   2. 메시지 영역
+   ================================================== */
+.msg-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.msg-area::-webkit-scrollbar {
+    display: none;
+}
+
+.msg-row {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* 상대방 메시지 */
+.msg-row.other {
+    justify-content: flex-start;
+}
+
+.msg-row.other .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.msg-row.other .msg-bubble {
+    background-color: #ffffff;
+    border: 1px solid #d0e8ff;
+    color: #333;
+    border-top-left-radius: 0;
+}
+
+/* 내 메시지 */
+.msg-row.me {
+    justify-content: flex-end;
+}
+
+.msg-row.me .msg-bubble {
+    background-color: #6cb5ed;
+    color: #ffffff;
+    border-top-right-radius: 0;
+}
+
+.msg-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.msg-time {
+    font-size: 10px;
+    color: #888;
+    margin: 0 5px;
+    margin-bottom: 2px;
+    min-width: fit-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 카카오톡 스타일 날짜 변경선 */
+.date-divider {
+    text-align: center;
+    margin: 20px 0;
+    /* 위아래 여백을 넉넉하게 줘서 답답하지 않게 */
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.date-divider-text {
+    background-color: rgba(0, 0, 0, 0.15);
+    /* 찐 카톡 느낌의 반투명 캡슐 */
+    color: #ffffff;
+    /* 글씨는 깔끔한 흰색 */
+    font-size: 12px;
+    padding: 5px 16px;
+    /* 좌우로 조금 더 길게 */
+    border-radius: 20px;
+    /* 완벽한 타원형 */
+    display: inline-block;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /* 살짝 입체감 추가 */
+}
+
+/* ==================================================
+   ★ [핵심 복구] 입력 영역 (기존 디자인 + textarea 기능)
+   ================================================== */
+/* ==================================================
+   ★ [최종 복구] 입력 영역 (하늘색 테마 + 줄바꿈 기능)
+   ================================================== */
+/* ==================================================
+   ★ [최종 수정] 입력 영역 (수직 중앙 정렬 적용)
+   ================================================== */
+.input-area {
+    display: flex;
+
+    /* ★ 핵심 변경: 요소들을 수직 중앙("보이지 않는 점선")에 정렬 */
+    align-items: center;
+
+    /* ★ 위아래 여백을 10px로 동일하게 맞춰서 중앙 느낌 강조 */
+    padding: 10px 15px;
+
+    background-color: #d0e8ff;
+    border-top: 1px solid #c0dfff;
+    gap: 10px;
+    min-height: 60px;
+    height: auto;
+}
+
+/* ★ textarea 스타일 */
+textarea.input-field {
+    flex: 1;
+    border: 1px solid #a0cfee;
+    border-radius: 20px;
+    background-color: #b3d7f5;
+    padding: 10px 15px;
+    outline: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: #333;
+
+    resize: none;
+    overflow-y: hidden;
+    line-height: 1.5;
+    height: 40px;
+    max-height: 120px;
+}
+
+textarea.input-field::placeholder {
+    color: #666;
+}
+
+/* ★ 아이콘 스타일 (margin-bottom 제거) ★ */
+.btn-plus {
+    font-size: 24px;
+    color: #3498db;
+    cursor: pointer;
+
+    /* 기존 margin-bottom 제거 -> 중앙 정렬에 맡김 */
+    margin-bottom: 0;
+}
+
+.btn-img-upload {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    opacity: 0.8;
+
+    /* 기존 margin-bottom 제거 */
+    margin-bottom: 0;
+}
+
+.btn-img-upload:hover {
+    opacity: 1;
+}
+
+/* ★ 전송 버튼 스타일 (margin-bottom 제거) ★ */
+/* 1. 버튼 본체 (여기에 배경색과 둥근 테두리를 줍니다) */
+.btn-send {
+    background-color: #e0f0ff;
+    /* 🌟 예쁜 파스텔 파란색 배경 (원하시는 색으로 변경!) */
+    width: 40px;
+    /* 🌟 가로 크기 (정사각형으로 맞춤) */
+    height: 40px;
+    /* 🌟 세로 크기 (정사각형으로 맞춤) */
+    border-radius: 50%;
+    /* 🌟 핵심! 완전한 동그라미로 깎아줍니다 */
+    display: flex;
+    justify-content: center;
+    /* 가로 중앙 정렬 */
+    align-items: center;
+    /* 세로 중앙 정렬 */
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    /* 기존에 있던 불필요한 패딩 제거 */
+    margin-bottom: 0;
+    transition: all 0.2s ease;
+    /* 부드러운 애니메이션 */
+}
+
+/* 2. 전송 아이콘 (배경색은 빼고 아이콘 색상만!) */
+.btn-send::before {
+    content: '\f1d8';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 18px;
+    /* 🌟 동그라미 안에 쏙 들어가게 크기 살짝 조절 */
+    color: #3498db;
+    /* 아이콘 색상 */
+    margin-right: 2px;
+    /* 비행기 모양 특성상 시각적 중앙을 맞추기 위한 미세 조정 */
+}
+
+/* 3. 마우스 올렸을 때 살짝 진해지는 효과 (보너스!) */
+.btn-send:hover {
+    background-color: #3498db;
+}
+
+.btn-send:hover::before {
+    color: #ffffff;
+    /* 마우스 올리면 비행기가 하얀색으로 변신! */
+}
+
+/* [상용구 메뉴] 배경 (어두운 처리) - 기존과 동일 */
+.template-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+/* [상용구 메뉴] 박스 디자인 (수정됨) */
+.template-box {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 25px 25px 0 0;
+    /* 둥글게 */
+    /* padding을 제거하고 헤더와 리스트에 각각 줍니다 (꽉 찬 배경색을 위해) */
+    overflow: hidden;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+    /* 그림자 추가로 입체감 */
+    animation: slideUp 0.3s ease-out;
+}
+
+/* [상용구 메뉴] 헤더 (수정됨: 글자색 검정) */
+.template-header {
+    background-color: #b3d7f5;
+    /* 배경: 파스텔 하늘색 */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: black;
+    /* ★ 수정: 글자색을 검은색으로 변경 */
+}
+
+/* 닫기 버튼 (X) */
+.template-header .close-btn {
+    font-size: 24px;
+    cursor: pointer;
+    color: black;
+    /* ★ 수정: X 버튼도 잘 보이게 검은색으로 */
+    transition: 0.2s;
+}
+
+/* 닫기 버튼 마우스 올렸을 때 */
+.template-header .close-btn:hover {
+    color: #fff;
+    /* 마우스 올리면 흰색으로 반전 (포인트) */
+}
+
+/* [상용구 메뉴] 버튼 리스트 영역 */
+.template-list {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #fff;
+    /* 리스트 배경은 흰색 */
+}
+
+/* 각 버튼 디자인 (색상 적용 #3498db) */
+.template-list button {
+    padding: 14px;
+    border: 2px solid #b3d7f5;
+    /* 테두리를 배경색과 맞춤 */
+    border-radius: 12px;
+    background: white;
+    color: #555;
+    /* 글자색은 너무 진하지 않은 회색 */
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 버튼 마우스 오버 효과 (진한 파랑 #3498db) */
+.template-list button:hover {
+    background: #b3d7f5;
+    /* 배경이 부드러운 하늘색으로 */
+    border-color: #3498db;
+    /* 테두리는 진한 파란색으로 강조 */
+    color: #3498db;
+    /* 글자도 진한 파란색으로 */
+    transform: translateY(-2px);
+    /* 살짝 떠오르는 효과 */
+}
+
+/* 아래에서 위로 올라오는 애니메이션 (기존 동일) */
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* [메인 메뉴] 배경 */
+.main-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9997;
+    /* 상용구 메뉴(9998)보다는 아래 */
+    align-items: flex-end;
+    /* 바닥에서 올라오게 */
+    justify-content: center;
+}
+
+/* [메인 메뉴] 하얀색 박스 (서랍) */
+/* 1. 모달 전체가 열릴 때 배경이 부드럽게 어두워지는 효과 */
+dialog[open] {
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.main-menu-box {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px 24px 0 0;
+    /* 곡선을 더 부드럽게 */
+    padding: 40px 20px 50px 20px;
+    /* 위아래 여백을 넉넉히 줘서 중앙 밸런스 확보 */
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
+    /* 은은한 그림자 */
+    display: flex;
+    justify-content: center;
+    /* 내부 아이템 중앙 정렬 */
+
+    animation: slideUp 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* 1. 전체 틀: 여백을 조정하여 균형감 확보 */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 420px;
+    /* 너무 퍼지지 않게 최대 너비 제한해서 중앙으로 모아줌 */
+}
+
+/* 2. 개별 아이템: 구조 유지 */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* 3. 아이콘: 모달 크기에 맞게 '적당히' 확대 (핵심) */
+.menu-icon-circle {
+    width: 60px;
+    /* 기존 55px -> 60px 사이즈 업! */
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    /* 아이콘과 글자 사이 간격 쪼금 더 띄움 */
+    font-size: 26px;
+    /* 아이콘 자체 크기 업! */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    /* 버튼에 입체감 살짝 추가 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 마우스 올렸을 때 살짝 떠오르는 애니메이션 */
+.menu-item:hover .menu-icon-circle {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* 메뉴 이름 텍스트 */
+.menu-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+    /* 텍스트를 너무 까맣지 않은 세련된 먹색으로 */
+    text-align: center;
+}
+
+/* [정석] dialog 기본 스타일 초기화 */
+.std-dialog-clear {
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    max-width: 480px;
+    /* 모바일 컨테이너 너비와 일치 */
+    margin: auto;
+    outline: none;
+    overflow: visible;
+}
+
+/* 브라우저 제공 배경 어둡게 처리 (기존 overlay 배경색과 일치시킴) */
+.std-dialog-clear::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* ==================================================
+   [v3 추가] 이미지 확대 모달 (전체 화면)
+   ================================================== */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* ★ 핵심 수술 부위: 이미지가 모니터를 뚫지 못하게 절대 크기 제한! */
+.modal-content-img {
+    width: 90%;
+    /* 좌우 여백을 살짝 남김 */
+    max-width: 450px;
+    /* 모바일 컨테이너(480px)를 넘어가지 않도록 철벽 방어! */
+    max-height: 80vh;
+    /* 세로 길이도 브라우저 높이의 80%까지만 허용 */
+    object-fit: contain;
+    /* 비율 찌그러짐 완벽 방지 */
+    border-radius: 8px;
+    /* 모서리를 살짝 둥글게 처리 (선택) */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    /* 살짝 그림자 추가로 입체감 */
+}
+
+/* ★ 여기가 문의하신 닫기 버튼 스타일입니다 ★ */
+.close-modal-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10000;
+}
+
+.close-modal-btn:hover {
+    color: #ff1a1a !important;
+    transform: scale(1.15);
+}
+
+/* ==================================================
+   채팅방 하단 입력창(Footer) 아이콘 완벽 음영
+   ================================================== */
+
+/* 1. 플러스(+) 버튼 (폰트 아이콘이라 text-shadow 사용) */
+.btn-plus {
+    transition: text-shadow 0.2s ease, transform 0.1s ease !important;
+}
+
+.btn-plus:hover {
+    text-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.btn-plus:active {
+    transform: scale(0.9) !important;
+}
+
+/* 2. 사진 첨부(앨범) 버튼 (이미지 태그라 drop-shadow 사용) */
+.btn-img-upload {
+    transition: filter 0.2s ease, transform 0.1s ease !important;
+}
+
+.btn-img-upload:hover {
+    filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.4)) !important;
+    opacity: 1 !important;
+}
+
+.btn-img-upload:active {
+    transform: scale(0.9) !important;
+}
+
+
+/* 1. 내부 아이콘(알맹이)에 애니메이션 속성 부여 */
+.menu-icon-circle i {
+    font-size: 20px !important;
+    transition: text-shadow 0.2s ease-in-out, transform 0.1s ease-in-out !important;
+}
+
+/* 2. 마우스를 올렸을 때 안쪽 아이콘 자체에만 선명한 그림자 생성 */
+.menu-item:hover .menu-icon-circle i {
+    text-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 3. 클릭 시 안쪽 아이콘만 쫀득하게 눌리는 효과 */
+.menu-item:active .menu-icon-circle i {
+    transform: scale(0.85) !important;
+}
+
+/* [chat_room.css 추가] 파일 전용 메시지 버블 */
+.file-bubble {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #d0e8ff;
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-top: 5px;
+    cursor: pointer;
+    min-width: 200px;
+    max-width: 260px;
+    /* 기존 msg-bubble의 70% 제약 내외로 설정 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+}
+
+/* 내가 보낸 파일일 때 배경색 살짝 조정 */
+.msg-row.me .file-bubble {
+    background-color: #f8fbff;
+    border-color: #a0cfee;
+    border-top-right-radius: 0;
+    /* 기존 말풍선 꼬리 규칙 계승 */
+}
+
+/* 상대방이 보낸 파일 */
+.msg-row.other .file-bubble {
+    border-top-left-radius: 0;
+}
+
+.file-bubble:hover {
+    background-color: #f0f7ff;
+}
+
+.file-icon-box {
+    font-size: 24px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-info-box {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* 파일명이 너무 길면 잘라줌 */
+}
+
+.file-display-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    max-width: 180px;
+    /* 박스가 화면을 뚫고 나가지 않게 제어 */
+    word-break: break-all;
+    /* 긴 이름은 가차없이 밑으로 줄바꿈 */
+    white-space: normal;
+    /* 여러 줄 허용 */
+    line-height: 1.4;
+    /* 위아래 글자 간격 쾌적하게 */
+    margin-bottom: 2px;
+}
+
+.file-display-sub {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* --- 안 읽음 표시 '1' 스타일 (카카오톡 감성) --- */
+.unread-count {
+    color: #ff7f50;
+    /* 쨍한 노란색 */
+    font-size: 11px;
+    font-weight: bold;
+    margin-right: 5px;
+    align-self: flex-end;
+    /* 말풍선 아래쪽에 착 달라붙게 */
+    margin-bottom: 3px;
+}
+
+.msg-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 5px;
+}
+
+/* =========================================
+   추가된 모달(Dialog) 및 이미지 확대 스타일
+========================================= */
+
+/* [정석] dialog 기본 스타일 초기화 (기존 레이아웃 보존) */
+.std-dialog-clear {
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+    outline: none;
+    overflow: visible;
+}
+
+.std-dialog-clear::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* --- 이미지 확대 모달 (전체 화면) --- */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.modal-content-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: none;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10000;
+}
+
+.close-modal-btn:hover {
+    color: #bbb;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.chat-image {
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.chat-image:active {
+    transform: scale(0.98);
+}
+
+/* ============================================================
+   🌙 채팅방 다크모드 (KUMO Master Palette 적용)
+   ============================================================ */
+body.dark-mode {
+    background-color: #1e1f21 !important;
+    color: #e3e5e8 !important;
+}
+
+body.dark-mode .mobile-container {
+    background-color: #1e1f21 !important;
+}
+/* 헤더 */
+body.dark-mode .chat-header {
+    background-color: #1e1f21 !important;
+    border-bottom: 1px solid #37393d !important;
+}
+body.dark-mode .header-store-name { color: #e3e5e8 !important; }
+body.dark-mode .header-store-img { border-color: #37393d !important; } /* 다크모드 프로필 테두리 */
+body.dark-mode .header-back-btn i,
+body.dark-mode .translate-icon-img { filter: brightness(0) invert(1) opacity(0.8); }
+
+/* 메시지 영역 */
+body.dark-mode .msg-area {
+    background-color: #1e1f21 !important;
+}
+
+/* 상대방 말풍선 */
+body.dark-mode .msg-row.other .msg-bubble {
+    background-color: #2a2b2e !important;
+    color: #e3e5e8 !important;
+    border: 1px solid #37393d !important;
+}
+
+/* 내 말풍선 */
+body.dark-mode .msg-row.me .msg-bubble {
+    background-color: #7db4e6 !important;
+    color: #1e1f21 !important; /* 🌟 포인트 컬러 배경엔 어두운 글자! */
+}
+
+/* 날짜 구분선 */
+body.dark-mode .date-divider-text {
+    background-color: #252729 !important;
+    color: #91959b !important;
+    border: 1px solid #37393d !important;
+}
+
+/* 시간 & 안읽음 표시 */
+body.dark-mode .msg-time { color: #91959b !important; }
+
+/* 입력창(하단) */
+body.dark-mode .input-area {
+    background-color: #1e1f21 !important;
+    border-top: 1px solid #37393d !important;
+}
+body.dark-mode .input-field {
+    background-color: #252729 !important;
+    border: 1px solid #37393d !important;
+    color: #e3e5e8 !important;
+}
+body.dark-mode .input-field::placeholder { color: #91959b !important; }
+body.dark-mode .btn-send {
+    background-color: #7db4e6 !important;
+    color: #1e1f21 !important;
+}
+body.dark-mode .btn-plus, body.dark-mode .btn-img-upload { filter: brightness(0) invert(1) opacity(0.6); }
+
+/* 모달 메뉴 (템플릿, 플러스 메뉴) */
+body.dark-mode .main-menu-box,
+body.dark-mode .template-box {
+    background-color: #2a2b2e !important;
+    border-top: 1px solid #37393d !important;
+    color: #e3e5e8 !important;
+}
+body.dark-mode .template-header { border-bottom: 1px solid #37393d !important; }
+body.dark-mode .template-list button {
+    background-color: #252729 !important;
+    color: #e3e5e8 !important;
+    border: 1px solid #37393d !important;
+}
+body.dark-mode .template-list button:hover { background-color: #37393d !important; }
+body.dark-mode .menu-name { color: #b0b3b8 !important; }
+
+/* 파일 말풍선 */
+body.dark-mode .file-bubble {
+    background-color: #2a2b2e !important;
+    border: 1px solid #37393d !important;
+}
+body.dark-mode .file-display-name { color: #e3e5e8 !important; }
+body.dark-mode .file-display-sub { color: #91959b !important; }
+
+/* 🌙 다크모드: 번역 아이콘 항상 선명하게 강제 고정 */
+body.dark-mode .translate-icon-img {
+    filter: invert(1) brightness(0.9) !important;
+    /* 검은 아이콘을 하얗게 반전 (기본 회색 필터 무시) */
+    opacity: 1 !important;
+    /* 혹시 모를 투명도 간섭 완벽 차단 */
+}
+
+/* 🌙 다크모드: 번역 아이콘 원본 색상 그대로 항상 선명하게 강제 고정 */
+body.dark-mode .translate-icon-img {
+    filter: none !important;
+    /* 요주의 범인 invert 제거! 원본 색상 100% 출력 */
+    opacity: 1 !important;
+    /* 회색으로 묻히는 현상 차단 */
+}
+
+/* 🌙 다크모드 전용 호버 효과 (원본 색상 유지 + 은은한 하얀색 그림자) */
+body.dark-mode .header-translate-btn:hover .translate-icon-img {
+    filter: drop-shadow(0px 3px 4px rgba(255, 255, 255, 0.3)) !important;
+}

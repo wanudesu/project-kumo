@@ -1,0 +1,446 @@
+@charset "UTF-8";
+
+/* ============================================================
+   KUMO - 로그인 공통 헤더 (NonLogin 표준 디자인 + 알림창 복구)
+   ============================================================ */
+
+/* 쿠모 로고*/
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 🌟 로고를 정중앙으로! */
+    margin-left: 25px;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+/* 0. 전역 변수 */
+:root {
+    --header-padding: 20px 40px;
+    --nav-gap: 25px;
+    --icon-size: 18px;
+    --text-main: #333333;
+    --text-sub: #666666;
+    --border-color: #eeeeee;
+    --primary-color: #7db4e6;
+    --danger-color: #ff6b6b;
+    --hover-bg: #f5f7fa;
+    --bg-card: #ffffff;
+    --dropdown-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+    --bg-main: #1e1f21;
+    --bg-card: #2d2d2d;
+    /* ← 검정 → 회색으로 */
+    --text-main: #e3e5e8;
+    --text-sub: #aaaaaa;
+    --border-color: #37393d;
+    --primary-color: #7db4e6;
+    --hover-bg: #2f3033;
+    /* ← 회색 계열로 */
+    --dropdown-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* 1. 헤더 레이아웃 */
+.authenticated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: var(--header-padding);
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.authenticated-header.scrolled {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-menu {
+    display: flex;
+    gap: var(--nav-gap);
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.nav-menu a:hover { color: var(--primary-color); }
+
+/* 2. 아이콘 버튼 */
+.notification-container,
+.lang-container,
+.profile-container,
+.icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--icon-size);
+    cursor: pointer;
+    color: var(--text-main);
+    background: none;
+    border: none;
+    transition: color 0.2s;
+}
+
+.icon-btn:hover,
+.notification-container:hover .icon-btn,
+.lang-container:hover .icon-btn {
+    color: var(--primary-color);
+}
+
+/* 3. 프로필 사진 */
+.user-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--border-color);
+    flex-shrink: 0;
+    transition: border-color 0.3s;
+}
+.profile-container:hover .user-avatar { border-color: var(--primary-color); }
+
+/* 4. 알림 뱃지 */
+.notify-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* 5. 드롭다운 공통 스타일 */
+.notify-dropdown,
+.lang-dropdown,
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1030;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.notify-dropdown.show,
+.lang-dropdown.show,
+.profile-dropdown.show {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+.lang-dropdown {
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    min-width: 100px;
+    padding: 5px;
+}
+
+/* notify-dropdown 위치 통일 */
+.notify-dropdown {
+    right: -10px;
+    left: auto;
+    transform: none;
+    width: 320px;
+}
+.profile-dropdown {
+    right: 0;
+    left: auto;
+    min-width: 200px;
+}
+
+/* 위치 및 크기 조정 */
+.lang-dropdown {
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    min-width: 110px;
+    padding: 6px;
+    border-radius: 14px;
+}
+.profile-dropdown { right: 0; min-width: 200px; }
+
+
+/* 6. 드롭다운 내부 아이템 */
+
+/* 프로필 정보 영역 */
+.profile-info {
+    padding: 15px 20px;
+    background-color: var(--hover-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.user-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+.user-email { font-size: 11px; color: var(--text-sub); }
+
+/* 언어 & 프로필 아이템 공통 */
+.lang-item,
+.profile-item {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--text-main);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.lang-item {
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+}
+
+.lang-item:hover,
+.profile-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+    transform: translateX(2px);
+}
+.lang-item:hover { transform: none; }
+
+.profile-item.logout {
+    color: var(--danger-color);
+    border-top: 1px solid var(--border-color);
+    margin-top: 5px;
+    border-radius: 0 0 8px 8px;
+}
+
+/* ============================================================
+   [복구됨] 알림창(공지) 상세 UI
+   ============================================================ */
+
+/* 알림 헤더 */
+.notify-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+}
+.notify-header span { font-weight: bold; font-size: 14px; color: var(--text-main); }
+
+.header-buttons { display: flex; gap: 8px; }
+.header-btn { font-size: 11px; color: var(--text-sub); background: none; border: none; cursor: pointer; }
+.header-btn:hover { color: var(--text-main); text-decoration: underline; }
+
+/* 알림 내용 영역 */
+.notify-body {
+    max-height: 350px;
+    overflow-y: auto;
+    background-color: var(--bg-card);
+    transition: max-height 0.3s ease; /* 부드러운 애니메이션 추가 */
+}
+
+/* [추가] 알림 확장 상태 */
+.notify-body.expanded {
+    max-height: 800px; /* 충분히 큰 값으로 설정 */
+}
+
+/* 알림 아이템 */
+.notify-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    align-items: flex-start;
+    transition: background 0.2s;
+}
+.notify-item:hover { background-color: var(--hover-bg); }
+.notify-item.unread { background-color: rgba(66, 165, 245, 0.08); } /* 안 읽은 알림 */
+
+.notify-content { flex: 1; }
+.notify-text { font-size: 13px; color: var(--text-main); margin-bottom: 4px; line-height: 1.4; margin-left: 10px;}
+.notify-time { font-size: 11px; color: var(--text-sub); }
+
+/* 삭제 버튼 */
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: var(--text-sub);
+    opacity: 0;
+    transition: all 0.2s;
+    padding: 5px;
+}
+.notify-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { color: var(--danger-color); }
+
+/* 알림 없음 (Empty State) */
+.notify-empty {
+    padding: 50px 20px;
+    text-align: center;
+    color: var(--text-sub);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.notify-empty i { font-size: 32px; color: var(--border-color); }
+.notify-empty p { margin: 0; font-size: 13px; }
+
+/* 알림 푸터 */
+.notify-footer {
+    padding: 12px;
+    text-align: center;
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    font-size: 13px;
+    color: var(--text-sub);
+    cursor: pointer;
+}
+.notify-footer:hover { color: var(--primary-color); background-color: var(--hover-bg); }
+
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInCenter {
+    from { opacity: 0; transform: translate(-50%, -5px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+.lang-dropdown.show { animation: fadeInCenter 0.2s ease; }
+
+.profile-dropdown hr {
+    display: none !important;
+}
+
+/* 다크모드 드롭다운 */
+body.dark-mode .notify-dropdown,
+body.dark-mode .lang-dropdown,
+body.dark-mode .profile-dropdown {
+    background-color: #2a2b2e;
+    border-color: #3e3f42;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .profile-info {
+    background-color: #323336;
+    border-bottom-color: #3e3f42;
+}
+
+body.dark-mode .user-name {
+    color: #e3e5e8;
+}
+
+body.dark-mode .user-email {
+    color: #91959b;
+}
+
+body.dark-mode .lang-item,
+body.dark-mode .profile-item {
+    color: #e3e5e8;
+}
+
+body.dark-mode .lang-item:hover,
+body.dark-mode .profile-item:hover {
+    background-color: #323336;
+    color: #7db4e6;
+}
+
+body.dark-mode .profile-item.logout {
+    color: #ff6b6b;
+    border-top-color: #3e3f42;
+}
+
+body.dark-mode .notify-header {
+    background-color: #323336;
+    border-bottom-color: #3e3f42;
+}
+
+body.dark-mode .notify-header span {
+    color: #e3e5e8;
+}
+
+body.dark-mode .notify-body {
+    background-color: #2a2b2e;
+}
+
+body.dark-mode .notify-item {
+    border-bottom-color: #3e3f42;
+}
+
+body.dark-mode .notify-item:hover {
+    background-color: #323336;
+}
+
+body.dark-mode .notify-text {
+    color: #e3e5e8;
+}
+
+body.dark-mode .notify-time {
+    color: #91959b;
+}
+
+body.dark-mode .notify-footer {
+    background-color: #323336;
+    border-top-color: #3e3f42;
+    color: #91959b;
+}
+
+body.dark-mode .notify-footer:hover {
+    background-color: #3e3f42;
+    color: #7db4e6;
+}
+
+body.dark-mode .notify-empty i {
+    color: #3e3f42;
+}
+
+body.dark-mode .notify-empty p {
+    color: #91959b;
+}
+
+/* ✅ logout 전용 hover - 빨간색 계열로 */
+.profile-item.logout:hover {
+    background-color: rgba(255, 107, 107, 0.08);
+    color: #ff4d4d !important;
+    transform: translateX(2px);
+}
+
+body.dark-mode .profile-item.logout:hover {
+    background-color: rgba(255, 107, 107, 0.12);
+    color: #ff6b6b !important;
+}

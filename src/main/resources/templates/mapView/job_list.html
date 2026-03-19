@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Job List</title>
+
+    <link rel="stylesheet" th:href="@{/css/mainView/job_list.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script defer th:src="@{/js/mainView/job_list.js}"></script>
+</head>
+<body>
+
+<div style="overflow-x: auto;">
+    <table class="job-table">
+        <thead>
+        <tr id="tableHeader">
+            <th>제목</th>
+            <th>상호명</th>
+            <th>근무지</th>
+            <th>급여</th>
+            <th>연락처</th>
+            <th>담당자</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody id="listBody">
+        <tr><td colspan="7" class="msg-box">데이터를 불러오는 중...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

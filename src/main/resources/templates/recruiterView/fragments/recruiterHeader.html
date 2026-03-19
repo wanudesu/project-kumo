@@ -1,0 +1,188 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <div th:fragment="headerFragment">
+    <header class="authenticated-header">
+      <link
+        rel="stylesheet"
+        th:href="@{/css/RecruiterFragments/RecruiterHeader.css}"
+        sec:authorize="isAuthenticated()"
+      />
+
+      <a th:href="@{/Recruiter/Main}" class="logo">
+        <img src="/images/recruiter/recruiterLogo.png" alt="KUMO" />
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li class="icon-btn notification-container" id="notifyBtn">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notify-badge" style="display: none;">0</span>
+
+            <div class="notify-dropdown" id="notifyMenu">
+              <div class="notify-header">
+                <span th:text="#{header.notifications}">알림</span>
+                <div class="header-buttons">
+                  <button
+                    class="header-btn read-all"
+                    id="markAllReadBtn"
+                    th:text="#{header.mark_read}"
+                  >
+                    모두 읽음
+                  </button>
+                  <span class="divider">|</span>
+                  <button
+                    class="header-btn delete-all"
+                    id="deleteAllBtn"
+                    th:text="#{header.delete_all}"
+                    th:data-confirm="#{header.delete_all_confirm}"
+                  >
+                    전체 삭제
+                  </button>
+                </div>
+              </div>
+
+              <div class="notify-body" id="notifyList">
+                <div
+                  class="notify-empty"
+                  id="notifyEmpty"
+                  style="display: none;"
+                >
+                  <i class="fa-regular fa-bell-slash"></i>
+                  <p th:text="#{notification.empty}">새로운 알림이 없습니다.</p>
+                </div>
+              </div>
+
+              <div
+                class="notify-footer"
+                id="expandBtn"
+                th:data-more="#{notification.more}"
+                th:data-fold="#{notification.fold}"
+              >
+                <span th:text="#{notification.more}">더 보기</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+            </div>
+          </li>
+
+          <li class="icon-btn lang-container" id="langBtn">
+            <i class="fa-solid fa-globe"></i>
+            <div class="lang-dropdown" id="langMenu">
+              <a href="javascript:changeLang('ko')" class="lang-item">한국어</a>
+              <a href="javascript:changeLang('ja')" class="lang-item">日本語</a>
+            </div>
+          </li>
+
+          <li class="icon-btn" id="darkModeBtn">
+            <i class="fa-regular fa-sun" id="darkModeIcon"></i>
+          </li>
+
+          <li class="profile-container" id="profileBtn">
+            <div class="profile-circle">
+              <img th:src="${profileImageUrl ?: '/images/common/default_profile.png'}" class="user-avatar" alt="Profile" >
+            </div>
+
+            <div class="profile-dropdown" id="profileMenu">
+              <div class="profile-info">
+                <span
+                  class="user-name"
+                  th:text="${#authentication.principal.nickname}"
+                  >User</span
+                >
+                <span class="user-email" th:text="${#authentication.name}"
+                  >email@test.com</span
+                >
+              </div>
+              <hr />
+              <a th:href="@{/Recruiter/Settings}" class="profile-item">
+                <i class="fa-regular fa-user"></i>
+                <span th:text="#{profile.mypage}">내 계정</span>
+              </a>
+                            <a th:href="@{/Recruiter/CompanyInfo}" class="profile-item">
+                              <i class="bi bi-building"></i>
+                              <span th:text="#{sidebar.menu.company}">회사 정보</span>
+                            </a>
+              <a th:href="@{/Recruiter/JobPosting}" class="profile-item">
+                <i class="fa-regular fa-file-lines"></i>
+                <span th:text="#{post.title}">공고 등록</span>
+              </a>
+              <hr />
+              <a th:href="@{/logout}" class="profile-item logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span th:text="#{profile.logout}">로그아웃</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- ============================================================
+         다크모드 깜빡임 방지 스크립트 (인라인 유지 필수)
+         ============================================================ -->
+    <script th:inline="javascript">
+      /* <![CDATA[ */
+      (function () {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+        const theme = localStorage.getItem('theme');
+        const root = document.documentElement;
+
+        if (theme === 'dark') {
+          root.classList.add('dark-mode');
+          // 🌙 다크모드 방어막 (사장님 원본 완벽 유지)
+          document.write(
+             '<style id="anti-flicker-css">' +
+            '  *:not(.no-prevent-transition) { transition: none !important; }' +
+            '  html, body { background-color: #121212 !important; color: #FFFFFF !important; margin: 0; padding: 0; }' +
+            '  body > *:not(header):not(.authenticated-header):not(.custom-header):not(script):not(style) { ' +
+            '    opacity: 0 !important; visibility: hidden !important; ' +
+            '  }' +
+            '  .btn-light-blue, .authenticated-header, .custom-header {' +
+            '    background-color: transparent !important;' +
+            '    border-bottom: 1px solid #2d2d2d !important;' +
+            '    display: flex !important;' +
+            '    opacity: 1 !important; visibility: visible !important;' +
+            '  }' +
+            '  .authenticated-header *, .custom-header * { color: #FFFFFF !important; border-color: #2d2d2d !important; }' +
+            // ✅ 추가
+            '  .btn-delete { background-color: rgba(255,100,100,0.15) !important; color: #ff6b6b !important; border-color: rgba(255,100,100,0.3) !important; }' +
+            '</style>'
+          );
+        } else {
+          // ☀️ 라이트모드 방어막 (배경색 변경 없이 본문만 숨겨서 환영 애니메이션 깨짐 방지)
+          document.write(
+            '<style id="anti-flicker-css">' +
+            '  body > *:not(header):not(.authenticated-header):not(.custom-header):not(script):not(style) { ' +
+            '    opacity: 0 !important; visibility: hidden !important; ' +
+            '  }' +
+            '</style>'
+          );
+        }
+
+        // 🌟 공통: HTML 로딩이 끝나자마자 0.05초 만에 방어막 해제 (1.5초 딜레이 원천 차단!)
+        window.addEventListener('DOMContentLoaded', function () {
+          setTimeout(function () {
+            const flickerStyle = document.getElementById('anti-flicker-css');
+            if (flickerStyle) flickerStyle.remove();
+          }, 50);
+        });
+
+        window.kumoMsgs = {
+          scheduleTitle: /*[[#{main.calendar.schedule_detail}]]*/ ' 일정',
+          noSchedule: /*[[#{main.calendar.no_schedule}]]*/ '일정이 없습니다.'
+        };
+      })();
+
+      window.NOTI_MSG = {
+        deleteAllConfirm: /*[[#{noti.delete.all.confirm}]]*/ '모든 알림을 삭제하시겠습니까?'
+      };
+      /* ]]> */
+    </script>
+
+    <!-- 나머지 헤더 로직은 외부 JS로 분리 -->
+    <script th:src="@{/js/RecruiterFragments/recruiterHeader.js}"></script>
+  </div>
+</html>

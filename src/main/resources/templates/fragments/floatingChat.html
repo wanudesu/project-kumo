@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="floatingChatFragment">
+    <script defer th:src="@{/js/chat/floatingChat.js}"></script>
+
+    <style>
+        #floatingChatContainer {
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 99999 !important;
+            overflow: hidden;
+        }
+
+        #floatingChatHeader {
+            height: 42px;
+            background: #7db4e6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            cursor: move;
+            user-select: none;
+        }
+
+        #floatingChatHeader .chat-title {
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #floatingChatHeader .chat-controls i {
+            cursor: pointer;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        #floatingChatHeader .chat-controls i:hover {
+            color: white;
+            transform: scale(1.15);
+        }
+
+        #floatingChatFrame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #f8f9fa;
+        }
+
+        /* 다크모드 대응 */
+        body.dark-mode #floatingChatContainer {
+            background: #1e1f21;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border: 1px solid #37393d;
+        }
+        body.dark-mode #floatingChatHeader {
+            background: #252629;
+            border-bottom: 1px solid #3e4044;
+            color: #e3e5e8;
+        }
+        body.dark-mode #floatingChatFrame {
+            background: #1e1f21;
+        }
+    </style>
+
+    <div id="floatingChatContainer">
+        <div id="floatingChatHeader">
+            <span class="chat-title">
+                <i class="fa-regular fa-comment-dots"></i>
+                <th:block th:text="#{chat.floating.title}">KUMO 채팅</th:block>
+            </span>
+            <div class="chat-controls">
+                <i class="fa-solid fa-xmark" onclick="closeFloatingChat()" th:title="#{chat.floating.close}" title="닫기"></i>
+            </div>
+        </div>
+        <iframe id="floatingChatFrame" src=""></iframe>
+    </div>
+
+</th:block>
+</html>
